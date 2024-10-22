@@ -6,34 +6,41 @@ namespace Kreata.Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ParentController(ITeacherRepo parentRepo) : ControllerBase
+    public class ParentController : ControllerBase
     {
-        private readonly IParentRepo _ParentRepo = (IParentRepo?)parentRepo;
+        private readonly IParentRepo _parentRepo;
 
+        // Constructor to inject the IParentRepo dependency
+        public ParentController(IParentRepo parentRepo)
+        {
+            _parentRepo = parentRepo;
+        }
+
+        // GET method to retrieve all parents
         [HttpGet]
         public async Task<IActionResult> SelectAllParentAsync()
         {
-            List<Parent>? Parents = new();
-            if (_ParentRepo is not null)
+            if (_parentRepo is not null)
             {
-                Parents = await _ParentRepo.GetAll();
-                return Ok(Parents);
+                var parents = await _parentRepo.GetAll();
+                return Ok(parents);
             }
             return BadRequest("A szülő adatai elérhetetlenek!");
         }
 
+        // GET method to retrieve a parent by ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBy(Guid id)
         {
-            Parent? szulo = new();
-            if (_ParentRepo is not null)
+            if (_parentRepo is not null)
             {
-                szulo = await _ParentRepo.GetBy(id);
-                if (szulo is not null)
-                    return Ok(szulo);
+                var parent = await _parentRepo.GetBy(id);
+                if (parent is not null)
+                {
+                    return Ok(parent);
+                }
             }
             return BadRequest("A szülő adatai elérhetetlenek!");
-
         }
     }
 }
