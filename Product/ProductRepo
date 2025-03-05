@@ -1,0 +1,86 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ShopProject.Models
+{
+    class Product //Létrehoztam a Product osztályt
+    {
+        public string Name { get; }
+        public string Category { get; }
+        public decimal Price { get; private set; }
+        public int Quantity { get; private set; }
+
+        //Konstruktor
+        public Product(string name, string category)
+        {
+            if (string.IsNullOrWhiteSpace(name)) //A termék neve nem lehet üres, vagy nem tartalmazhaz szóközt
+                throw new ArgumentException("A termék neve nem lehet üres!");
+            if (string.IsNullOrWhiteSpace(category))
+                throw new ArgumentException("A kategória nem lehet üres!");
+
+            Name = name;
+            Category = category;
+            Price = 0;
+            Quantity = 0;
+        }
+
+        //Az ár nem lehet negatív
+        public void SetPrice(decimal newPrice)
+        {
+            if (newPrice < 0)
+                throw new ArgumentException("Az ár nem lehet negatív!");
+            Price = newPrice;
+        }
+
+        //A mennyiség nem lehet negatív
+        public void SetQuantity(int newQuantity)
+        {
+            if (newQuantity < 0)
+                throw new ArgumentException("A mennyiség nem lehet negatív!");
+            Quantity = newQuantity;
+        }
+
+        //A ToString metódus az adatok kiírása miatt kell
+        public override string ToString()
+        {
+            return $"{Name} ({Category}) - {Price} Ft, Készlet: {Quantity} db";
+        }
+    }
+
+    class ProductRepo //Létrehoztam a ProductRepo osztályt
+    {
+        private List<Product> products = new List<Product>(); //A termékek listáját tárolom ebben a listában
+
+        //Hozzáad egy terméket a listához, ha a mennyisége nagyobb, mint 0
+        public void AddProduct(Product product)
+        {
+            if (product.Quantity > 0)
+                products.Add(product);
+            else
+                Console.WriteLine($"{product.Name} nem adható hozzá, mert a mennyisége 0.");
+        }
+
+
+        //Eltávolít egy terméket a listából, ha a mennyisége 0
+        public void RemoveProduct(Product product)
+        {
+            if (product.Quantity == 0)
+                products.Remove(product);
+            else
+                Console.WriteLine($"{product.Name} nem törölhető, mert még van belőle készleten.");
+        }
+
+
+        //A termékek listázásához szükséges metódus
+        public void ListProducts()
+        {
+            foreach (var product in products)
+            {
+                Console.WriteLine(product);
+            }
+        }
+    }
+}
